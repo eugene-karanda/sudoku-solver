@@ -15,7 +15,7 @@ data class Sudoku<T : RawCell>(val matrix: List<List<T>>) {
     }
 
     fun <R : T> mapIndexed(block: (Int, Int, T) -> R): Sudoku<R> {
-        return matrix.mapIndexed() { rowIndex, row ->
+        return matrix.mapIndexed { rowIndex, row ->
             row.mapIndexed { columnIndex, cell ->
                 block(rowIndex, columnIndex, cell)
             }
