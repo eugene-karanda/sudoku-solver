@@ -19,12 +19,18 @@ class HiddenSingletonsTest {
     @DisplayName("process")
     inner class Process {
         @Test
-        fun `should replace all cells with candidate that occur only in this cell of this either row or column or square`() {
+        fun `should put number in each cell with candidate that occur only in this cell of this cell row(column, square)`() {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
-            val expectedSudoku = Sudoku.fromFile(filepath("/hidden-singletons.txt"))
 
             Assertions.assertThat(subject.process(sudoku))
-                    .isEqualTo(expectedSudoku)
+                    .isEqualTo(ProcessResult.builder<CellValue, CellValue> {
+                        NumberPut(9) at Position(0, 3)
+                        NumberPut(2) at Position(0, 8)
+                        NumberPut(4) at Position(2, 0)
+                        NumberPut(4) at Position(4, 1)
+                        NumberPut(9) at Position(5, 4)
+                        NumberPut(2) at Position(6, 5)
+                    })
         }
     }
 }

@@ -3,96 +3,112 @@ package org.overmind.sudokusolver
 import java.io.FileInputStream
 import java.util.*
 
-data class Sudoku<T : RawCell>(val matrix: List<List<T>>) {
-    operator fun get(rowIndex: Int, columnIndex: Int): T {
+data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
+    val cells: Map<Position, Cell> = Position.all
+            .associateBy({ it }, { Cell(it) })
+            .toSortedMap()
+
+    val rows: List<Row> = List(9, ::Row)
+
+    val columns: List<Column> = List(9, ::Column)
+
+    val squares: Map<SquarePosition, Square> = SquarePosition.all
+            .associateBy({ it }, { Square(it) })
+            .toSortedMap()
+
+    operator fun get(rowIndex: Int, columnIndex: Int): V {
         return matrix[rowIndex][columnIndex]
     }
 
-    fun <R : T> map(block: (T) -> R): Sudoku<R> {
-        return matrix.map { row ->
-            row.map(block)
-        }.run(::Sudoku)
+    operator fun get(position: Position): V {
+        return matrix[position.rowIndex][position.columnIndex]
     }
 
-    fun <R : T> mapIndexed(block: (Int, Int, T) -> R): Sudoku<R> {
-        return matrix.mapIndexed { rowIndex, row ->
-            row.mapIndexed { columnIndex, cell ->
-                block(rowIndex, columnIndex, cell)
-            }
-        }.run(::Sudoku)
+    inner class Row(val rowIndex: Int) {
+        fun cells(): Sequence<V> {
+            return matrix[rowIndex]
+                    .asSequence()
+        }
     }
 
-    fun rowNeighborsOfCell(rowIndex: Int, columnIndex: Int): Sequence<T> {
-        return matrix[rowIndex]
-                .asSequence()
-                .filterIndexed { index, _ ->
-                    index != columnIndex
-                }
+    inner class Column(val columnIndex: Int) {
+        fun cells(): Sequence<V> {
+            return ((0 until 9))
+                    .asSequence()
+                    .map { innerRowIndex ->
+                        this@Sudoku[innerRowIndex, columnIndex]
+                    }
+        }
     }
 
-    fun columnNeighborsOfCell(rowIndex: Int, columnIndex: Int): Sequence<T> {
-        return ((0 until rowIndex) + (rowIndex + 1 until 9))
-                .asSequence()
-                .map { innerRowIndex ->
-                    this[innerRowIndex, columnIndex]
-                }
+    inner class Square(val position: SquarePosition) {
+        fun cells(): Sequence<V> {
+            return PositionInSquare.all
+                    .map { innerPosition ->
+                        this@Sudoku[
+                                position.rowIndex * 3 + innerPosition.rowIndex,
+                                position.columnIndex * 3 + innerPosition.columnIndex
+                        ]
+                    }
+        }
+
+        fun additionalCells(positionInSquare: SquarePosition): Sequence<V> {
+            return SquarePosition.all
+                    .filter {
+                        it.rowIndex != positionInSquare.rowIndex || it.columnIndex != positionInSquare.columnIndex
+                    }
+                    .map { innerPosition ->
+                        this@Sudoku[
+                                position.rowIndex * 3 + innerPosition.rowIndex,
+                                position.columnIndex * 3 + innerPosition.columnIndex
+                        ]
+                    }
+        }
     }
 
-    fun squareNeighborsOfCell(rowIndex: Int, columnIndex: Int): Sequence<T> {
-        val squareTopRowIndex = (rowIndex / 3) * 3
-        val squareLeftColumnIndex = (columnIndex / 3) * 3
+    inner class Cell(val position: Position) {
+        val row: Row
+            get() = rows[position.rowIndex]
 
-        return (0 until 3)
-                .asSequence()
-                .flatMap { squareRowIndex ->
-                    (0 until 3)
-                            .asSequence()
-                            .filter { squareColumnIndex ->
-                                squareRowIndex != rowIndex || squareColumnIndex != columnIndex
-                            }
-                            .map { squareColumnIndex ->
-                                this[squareTopRowIndex + squareRowIndex, squareLeftColumnIndex + squareColumnIndex]
-                            }
-                }
-    }
+        val column: Column
+            get() = columns[position.columnIndex]
 
-    fun neighborsOfCell(rowIndex: Int, columnIndex: Int): Sequence<T> {
-        val rowNeighbors = matrix[rowIndex]
-                .asSequence()
-                .filterIndexed { index, _ ->
-                    index != columnIndex
-                }
+        val square: Square
+            get() = squares[position.toSquarePosition()]!!
 
-        val columnNeighbors = ((0 until rowIndex) + (rowIndex + 1 until 9))
-                .asSequence()
-                .map { innerRowIndex ->
-                    this[innerRowIndex, columnIndex]
-                }
+        val value: V
+            get() = this@Sudoku[position]
 
-        val squareTopRowIndex = (rowIndex / 3) * 3
-        val squareLeftColumnIndex = (columnIndex / 3) * 3
+        fun rowNeighbors(): Sequence<V> {
+            return row.cells()
+                    .except(value)
+        }
 
-        val squareNeighbors = (0 until 3)
-                .asSequence()
-                .filter { squareRowIndex ->
-                    squareRowIndex != rowIndex
-                }
-                .flatMap { squareRowIndex ->
-                    (0 until 3)
-                            .asSequence()
-                            .filter { squareColumnIndex ->
-                                squareColumnIndex != columnIndex
-                            }
-                            .map { squareColumnIndex ->
-                                this[squareTopRowIndex + squareRowIndex, squareLeftColumnIndex + squareColumnIndex]
-                            }
-                }
+        fun columnNeighbors(): Sequence<V> {
+            return column.cells()
+                    .except(value)
+        }
 
-        return rowNeighbors + columnNeighbors + squareNeighbors
+        fun squareNeighbors(): Sequence<V> {
+            return square.cells()
+                    .except(value)
+        }
+
+        fun neighbors(): Sequence<V> {
+            return rowNeighbors() + columnNeighbors() + square.additionalCells(position.toPositionInSquare())
+        }
+
+        fun neighborsGroups(): Sequence<Sequence<V>> {
+            return sequenceOf(
+                    rowNeighbors(),
+                    columnNeighbors(),
+                    squareNeighbors()
+            )
+        }
     }
 
     companion object {
-        fun fromFile(path: String): Sudoku<Cell> {
+        fun fromFile(path: String): Sudoku<CellValue> {
             val fis = FileInputStream(path)
             val scanner = Scanner(fis)
             val charMatrix = mutableListOf<String>()
@@ -112,12 +128,12 @@ data class Sudoku<T : RawCell>(val matrix: List<List<T>>) {
             scanner.nextLine()
 
             val matrix = List(9) matrixList@{ rowIndex ->
-                List(9) rowList@{ columnIndex ->
+                MutableList(9) rowList@{ columnIndex ->
                     val leftTopChar = charMatrix[rowIndex * 3][columnIndex * 3]
                     if (leftTopChar == '*') {
                         val centralChar = charMatrix[rowIndex * 3 + 1][columnIndex * 3 + 1]
                         val number = Character.digit(centralChar, 10)
-                        return@rowList NumberCell(number)
+                        return@rowList NumberCellValue(number)
                     }
 
                     val candidates = sortedSetOf<Int>()
@@ -133,24 +149,24 @@ data class Sudoku<T : RawCell>(val matrix: List<List<T>>) {
                             val number = Character.digit(char, 10)
 
                             if (number != (rowInnerIndex * 3 + columnInnerIndex + 1)) {
-                                throw IllegalArgumentException("Wrong number $number at cell($rowIndex, $columnIndex) at position($rowInnerIndex, $columnInnerIndex)")
+                                throw IllegalArgumentException("Wrong number $number at value($rowIndex, $columnIndex) at position($rowInnerIndex, $columnInnerIndex)")
                             }
 
                             candidates.add(number)
                         }
                     }
 
-                    return@rowList CandidatesCell(candidates)
+                    return@rowList CandidatesCellValue(candidates)
                 }
             }
 
             return Sudoku(matrix)
         }
 
-        fun rawFromFile(path: String): Sudoku<RawCell> {
+        fun rawFromFile(path: String): Sudoku<RawCellValue> {
             val fis = FileInputStream(path)
             val scanner = Scanner(fis)
-            val matrix = mutableListOf<List<RawCell>>()
+            val matrix = mutableListOf<MutableList<RawCellValue>>()
 
             for (rowGroupIndex in 0 until 3) {
                 scanner.nextLine()
@@ -160,12 +176,12 @@ data class Sudoku<T : RawCell>(val matrix: List<List<T>>) {
                         it.isDigit() || it.isWhitespace()
                     }.map {
                         when {
-                            it.isDigit() -> NumberCell(Character.digit(it, 10))
-                            it == ' ' -> EmptyCell
+                            it.isDigit() -> NumberCellValue(Character.digit(it, 10))
+                            it == ' ' -> EmptyCellValue
                             else -> throw IllegalArgumentException("Unknown char - '$it'")
                         }
                     }.also {
-                        matrix.add(it)
+                        matrix.add(it.toMutableList())
                     }
                 }
             }

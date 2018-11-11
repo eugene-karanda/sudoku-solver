@@ -22,19 +22,19 @@ class SudokuTest {
 
                 SoftAssertions.assertSoftly {
                     it.assertThat(rawSudoku[0, 2])
-                            .isEqualTo(CandidatesCell(2, 5, 6, 9))
+                            .isEqualTo(CandidatesCellValue(2, 5, 6, 9))
 
                     it.assertThat(rawSudoku[5, 4])
-                            .isEqualTo(CandidatesCell(1, 5, 9))
+                            .isEqualTo(CandidatesCellValue(1, 5, 9))
 
                     it.assertThat(rawSudoku[5, 6])
                             .isEqualTo(
-                                    NumberCell(6)
+                                    NumberCellValue(6)
                             )
 
                     it.assertThat(rawSudoku[8, 7])
                             .isEqualTo(
-                                    NumberCell(2)
+                                    NumberCellValue(2)
                             )
                 }
             }
@@ -50,19 +50,19 @@ class SudokuTest {
 
                 SoftAssertions.assertSoftly {
                     it.assertThat(rawSudoku[0, 2])
-                            .isEqualTo(EmptyCell)
+                            .isEqualTo(EmptyCellValue)
 
                     it.assertThat(rawSudoku[5, 4])
-                            .isEqualTo(EmptyCell)
+                            .isEqualTo(EmptyCellValue)
 
                     it.assertThat(rawSudoku[5, 6])
                             .isEqualTo(
-                                    NumberCell(6)
+                                    NumberCellValue(6)
                             )
 
                     it.assertThat(rawSudoku[8, 7])
                             .isEqualTo(
-                                    NumberCell(2)
+                                    NumberCellValue(2)
                             )
                 }
             }

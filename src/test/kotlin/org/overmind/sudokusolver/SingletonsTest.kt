@@ -19,12 +19,15 @@ class SingletonsTest {
     @DisplayName("process")
     inner class Process {
         @Test
-        fun `should replace all cells with single candidate to cells with number`() {
+        fun `should put number in each cells with single candidate`() {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
-            val expectedSudoku = Sudoku.fromFile(filepath("/singletons.txt"))
 
             Assertions.assertThat(subject.process(sudoku))
-                    .isEqualTo(expectedSudoku)
+                    .isEqualTo(ProcessResult.builder<CellValue, CellValue> {
+                        NumberPut(7) at Position(3, 0)
+                        NumberPut(8) at Position(3, 3)
+                        NumberPut(5) at Position(5, 5)
+                    })
         }
     }
 }

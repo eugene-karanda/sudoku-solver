@@ -1,27 +1,20 @@
 package org.overmind.sudokusolver
 
 class CandidatesProcessor {
-    fun process(rawSudoku: Sudoku<RawCell>): Sudoku<Cell> {
-        val matrix = List(9) matrixList@{ rowIndex ->
-            return@matrixList List(9) rowList@{ columnIndex ->
-                val cell = rawSudoku[rowIndex, columnIndex]
-                if (cell is NumberCell) {
-                    return@rowList cell as Cell
-                }
+    fun process(rawSudoku: Sudoku<RawCellValue>) = ProcessResult.builder<RawCellValue, CellValue> {
+        rawSudoku.cells.values.forEach { cell ->
+            if (cell.value is EmptyCellValue) {
+                val candidates = (1..9).toMutableSet()
 
-                val candidates = (1..9).toSortedSet()
-
-                rawSudoku.neighborsOfCell(rowIndex, columnIndex)
-                        .forEach { anotherCell ->
-                            if (anotherCell is NumberCell) {
-                                candidates.remove(anotherCell.number)
-                            }
+                cell.neighbors()
+                        .filterIsInstance<NumberCellValue>()
+                        .map(NumberCellValue::number)
+                        .forEach {
+                            candidates.remove(it)
                         }
 
-                return@rowList CandidatesCell(candidates)
+                SetupCandidates(candidates) at cell.position
             }
         }
-
-        return Sudoku(matrix)
     }
 }
