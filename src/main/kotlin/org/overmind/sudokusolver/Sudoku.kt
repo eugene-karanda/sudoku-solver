@@ -24,15 +24,30 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
         return matrix[position.rowIndex][position.columnIndex]
     }
 
-    inner class Row(val rowIndex: Int) {
-        fun cells(): Sequence<V> {
+    interface Group<V : RawCellValue> {
+        fun toPosition(index: Int)
+
+        fun values(): Sequence<V>
+    }
+
+    inner class Row(val rowIndex: Int) : Group<V> {
+        override fun toPosition(index: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun values(): Sequence<V> {
             return matrix[rowIndex]
                     .asSequence()
         }
+
     }
 
-    inner class Column(val columnIndex: Int) {
-        fun cells(): Sequence<V> {
+    inner class Column(val columnIndex: Int) : Group<V> {
+        override fun toPosition(index: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun values(): Sequence<V> {
             return ((0 until 9))
                     .asSequence()
                     .map { innerRowIndex ->
@@ -41,8 +56,12 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
         }
     }
 
-    inner class Square(val position: SquarePosition) {
-        fun cells(): Sequence<V> {
+    inner class Square(val position: SquarePosition) : Group<V> {
+        override fun toPosition(index: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun values(): Sequence<V> {
             return PositionInSquare.all
                     .map { innerPosition ->
                         this@Sudoku[
@@ -52,7 +71,7 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
                     }
         }
 
-        fun additionalCells(positionInSquare: SquarePosition): Sequence<V> {
+        fun additionalValues(positionInSquare: SquarePosition): Sequence<V> {
             return SquarePosition.all
                     .filter {
                         it.rowIndex != positionInSquare.rowIndex || it.columnIndex != positionInSquare.columnIndex
@@ -67,35 +86,31 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
     }
 
     inner class Cell(val position: Position) {
-        val row: Row
-            get() = rows[position.rowIndex]
+        val row: Row = rows[position.rowIndex]
 
-        val column: Column
-            get() = columns[position.columnIndex]
+        val column: Column = columns[position.columnIndex]
 
-        val square: Square
-            get() = squares[position.toSquarePosition()]!!
+        val square: Square = squares[position.toSquarePosition()]!!
 
-        val value: V
-            get() = this@Sudoku[position]
+        val value: V = this@Sudoku[position]
 
         fun rowNeighbors(): Sequence<V> {
-            return row.cells()
+            return row.values()
                     .except(value)
         }
 
         fun columnNeighbors(): Sequence<V> {
-            return column.cells()
+            return column.values()
                     .except(value)
         }
 
         fun squareNeighbors(): Sequence<V> {
-            return square.cells()
+            return square.values()
                     .except(value)
         }
 
         fun neighbors(): Sequence<V> {
-            return rowNeighbors() + columnNeighbors() + square.additionalCells(position.toPositionInSquare())
+            return rowNeighbors() + columnNeighbors() + square.additionalValues(position.toPositionInSquare())
         }
 
         fun neighborsGroups(): Sequence<Sequence<V>> {
