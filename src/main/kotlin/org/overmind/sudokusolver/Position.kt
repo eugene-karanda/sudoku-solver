@@ -1,13 +1,16 @@
 package org.overmind.sudokusolver
 
 data class Position(val rowIndex: Int, val columnIndex: Int) : Comparable<Position> {
+    val positionInSquare: SquarePosition = SquarePosition(rowIndex % 3, columnIndex % 3)
+
+    val squarePosition: SquarePosition = SquarePosition(rowIndex / 3, columnIndex / 3)
 
     override fun compareTo(other: Position): Int = compareValuesBy(this, other,
             { it.rowIndex },
             { it.columnIndex }
     )
-
     companion object {
+
         val all: Sequence<Position> = (0 until 9)
                 .asSequence()
                 .flatMap { rowIndex ->
@@ -17,14 +20,7 @@ data class Position(val rowIndex: Int, val columnIndex: Int) : Comparable<Positi
                                 Position(rowIndex, columnIndex)
                             }
                 }
-    }
 
-    fun toPositionInSquare(): SquarePosition {
-        return SquarePosition(rowIndex % 3, columnIndex % 3)
-    }
-
-    fun toSquarePosition(): SquarePosition {
-        return SquarePosition(rowIndex / 3, columnIndex / 3);
     }
 }
 

@@ -1,10 +1,17 @@
-package org.overmind.sudokusolver
+package org.overmind.sudokusolver.proccessor.impl
 
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.overmind.sudokusolver.CellValue
+import org.overmind.sudokusolver.Position
+import org.overmind.sudokusolver.Sudoku
+import org.overmind.sudokusolver.filepath
+import org.overmind.sudokusolver.processor.NumberPut
+import org.overmind.sudokusolver.processor.ProcessResult
+import org.overmind.sudokusolver.processor.impl.Singletons
 
 @DisplayName("Singletons")
 class SingletonsTest {

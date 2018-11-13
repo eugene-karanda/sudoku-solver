@@ -3,11 +3,7 @@ package org.overmind.sudokusolver
 import java.io.FileInputStream
 import java.util.*
 
-data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
-    val cells: Map<Position, Cell> = Position.all
-            .associateBy({ it }, { Cell(it) })
-            .toSortedMap()
-
+data class Sudoku<V : RawCellValue>(private val matrix: List<List<V>>) {
     val rows: List<Row> = List(9, ::Row)
 
     val columns: List<Column> = List(9, ::Column)
@@ -15,6 +11,13 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
     val squares: Map<SquarePosition, Square> = SquarePosition.all
             .associateBy({ it }, { Square(it) })
             .toSortedMap()
+
+    val groups: List<Group<V>> = rows + columns + squares.values
+
+    val cells: Map<Position, Cell> = Position.all
+            .associateBy({ it }, { Cell(it) })
+            .toSortedMap()
+
 
     operator fun get(rowIndex: Int, columnIndex: Int): V {
         return matrix[rowIndex][columnIndex]
@@ -24,29 +27,41 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
         return matrix[position.rowIndex][position.columnIndex]
     }
 
-    interface Group<V : RawCellValue> {
-        fun toPosition(index: Int)
-
-        fun values(): Sequence<V>
+    fun <R : V> map(block: (Cell) -> R) : Sudoku<R> {
+        return List(9) { rowIndex ->
+            List(9) { columnIndex ->
+                val position = Position(rowIndex, columnIndex)
+                val cell = cells[position]!!
+                block(cell)
+            }
+        }.run(::Sudoku)
     }
 
-    inner class Row(val rowIndex: Int) : Group<V> {
-        override fun toPosition(index: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+    interface Group<V : RawCellValue> {
+        fun values(): Sequence<V>
 
+        fun cells(): Sequence<Sudoku<V>.Cell>
+    }
+
+    inner class Row(private val rowIndex: Int) : Group<V> {
         override fun values(): Sequence<V> {
             return matrix[rowIndex]
                     .asSequence()
         }
 
-    }
-
-    inner class Column(val columnIndex: Int) : Group<V> {
-        override fun toPosition(index: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        override fun cells(): Sequence<Cell> {
+            return cells.asSequence()
+                    .filter { (position, _) ->
+                        position.rowIndex == rowIndex
+                    }
+                    .map { (_, cell) ->
+                        cell
+                    }
         }
 
+    }
+
+    inner class Column(private val columnIndex: Int) : Group<V> {
         override fun values(): Sequence<V> {
             return ((0 until 9))
                     .asSequence()
@@ -54,20 +69,36 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
                         this@Sudoku[innerRowIndex, columnIndex]
                     }
         }
+
+        override fun cells() : Sequence<Cell> {
+            return cells.asSequence()
+                    .filter { (position, _) ->
+                        position.columnIndex == columnIndex
+                    }
+                    .map { (_, cell) ->
+                        cell
+                    }
+        }
     }
 
-    inner class Square(val position: SquarePosition) : Group<V> {
-        override fun toPosition(index: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
+    inner class Square(private val squarePosition: SquarePosition) : Group<V> {
         override fun values(): Sequence<V> {
             return PositionInSquare.all
                     .map { innerPosition ->
                         this@Sudoku[
-                                position.rowIndex * 3 + innerPosition.rowIndex,
-                                position.columnIndex * 3 + innerPosition.columnIndex
+                                squarePosition.rowIndex * 3 + innerPosition.rowIndex,
+                                squarePosition.columnIndex * 3 + innerPosition.columnIndex
                         ]
+                    }
+        }
+
+        override fun cells(): Sequence<Cell> {
+            return cells.asSequence()
+                    .filter { (position, _) ->
+                        position.squarePosition == squarePosition
+                    }
+                    .map { (_, cell) ->
+                        cell
                     }
         }
 
@@ -78,8 +109,8 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
                     }
                     .map { innerPosition ->
                         this@Sudoku[
-                                position.rowIndex * 3 + innerPosition.rowIndex,
-                                position.columnIndex * 3 + innerPosition.columnIndex
+                                squarePosition.rowIndex * 3 + innerPosition.rowIndex,
+                                squarePosition.columnIndex * 3 + innerPosition.columnIndex
                         ]
                     }
         }
@@ -90,27 +121,27 @@ data class Sudoku<V : RawCellValue>(private val matrix: List<MutableList<V>>) {
 
         val column: Column = columns[position.columnIndex]
 
-        val square: Square = squares[position.toSquarePosition()]!!
+        val square: Square = squares[position.squarePosition]!!
 
         val value: V = this@Sudoku[position]
 
-        fun rowNeighbors(): Sequence<V> {
+        private fun rowNeighbors(): Sequence<V> {
             return row.values()
                     .except(value)
         }
 
-        fun columnNeighbors(): Sequence<V> {
+        private fun columnNeighbors(): Sequence<V> {
             return column.values()
                     .except(value)
         }
 
-        fun squareNeighbors(): Sequence<V> {
+        private fun squareNeighbors(): Sequence<V> {
             return square.values()
                     .except(value)
         }
 
         fun neighbors(): Sequence<V> {
-            return rowNeighbors() + columnNeighbors() + square.additionalValues(position.toPositionInSquare())
+            return rowNeighbors() + columnNeighbors() + square.additionalValues(position.positionInSquare)
         }
 
         fun neighborsGroups(): Sequence<Sequence<V>> {

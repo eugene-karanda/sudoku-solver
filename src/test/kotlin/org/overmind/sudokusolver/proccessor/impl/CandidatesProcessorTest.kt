@@ -1,10 +1,14 @@
-package org.overmind.sudokusolver
+package org.overmind.sudokusolver.proccessor.impl
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.overmind.sudokusolver.*
+import org.overmind.sudokusolver.processor.impl.CandidatesProcessor
+import org.overmind.sudokusolver.processor.ProcessResult
+import org.overmind.sudokusolver.processor.SetupCandidates
 
 @DisplayName("CandidatesProcessor")
 class CandidatesProcessorTest {
@@ -20,9 +24,9 @@ class CandidatesProcessorTest {
     inner class Process {
         @Test
         fun `should calculate candidates for each empty cell`() {
-            val rawSudoku = Sudoku.rawFromFile(filepath("/raw-sudoku.txt"))
+            val sudoku = Sudoku.rawFromFile(filepath("/raw-sudoku.txt"))
 
-            assertThat(subject.process(rawSudoku))
+            assertThat(subject.process(sudoku))
                     .isEqualTo(
                             ProcessResult.builder<RawCellValue, CellValue> {
                                 SetupCandidates(2, 5, 6, 9) at Position(0, 2)

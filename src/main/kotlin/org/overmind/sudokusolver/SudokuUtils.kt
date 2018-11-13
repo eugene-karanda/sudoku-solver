@@ -21,3 +21,15 @@ fun <C : RawCellValue> Sequence<C>.except(cell: C): Sequence<C> {
         it !== cell
     }
 }
+
+fun <T> Collection<T>.powerSet(): Set<Set<T>> = powerSet(this, setOf(setOf()))
+
+private tailrec fun <T> powerSet(left: Collection<T>, acc: Set<Set<T>>): Set<Set<T>> = when {
+    left.isEmpty() -> acc
+    else -> powerSet(
+            left.drop(1),
+            acc + acc.map {
+                it + left.first()
+            }
+    )
+}
