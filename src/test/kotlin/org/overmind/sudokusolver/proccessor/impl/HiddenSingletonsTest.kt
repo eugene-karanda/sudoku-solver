@@ -5,13 +5,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.overmind.sudokusolver.CellValue
 import org.overmind.sudokusolver.Position
 import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.filepath
-import org.overmind.sudokusolver.processor.impl.HiddenSingletons
 import org.overmind.sudokusolver.processor.NumberPut
 import org.overmind.sudokusolver.processor.ProcessResult
+import org.overmind.sudokusolver.processor.impl.HiddenSingletons
 
 @DisplayName("HiddenSingletons")
 class HiddenSingletonsTest {
@@ -30,7 +29,7 @@ class HiddenSingletonsTest {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
 
             Assertions.assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder<CellValue, CellValue> {
+                    .isEqualTo(ProcessResult.builder {
                         NumberPut(9) at Position(0, 3)
                         NumberPut(2) at Position(0, 8)
                         NumberPut(4) at Position(2, 0)

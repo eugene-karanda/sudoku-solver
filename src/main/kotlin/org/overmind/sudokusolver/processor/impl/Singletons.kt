@@ -7,8 +7,8 @@ import org.overmind.sudokusolver.processor.NumberPut
 import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.SudokuProcessor
 
-class Singletons : SudokuProcessor<CellValue, CellValue> {
-    override fun process(sudoku: Sudoku<CellValue>) = ProcessResult.builder<CellValue, CellValue> {
+class Singletons : SudokuProcessor {
+    override fun process(sudoku: Sudoku<CellValue>) = ProcessResult.builder {
         sudoku.cells.values.forEach { cell ->
             cell.value.run {
                 if (this is CandidatesCellValue) {

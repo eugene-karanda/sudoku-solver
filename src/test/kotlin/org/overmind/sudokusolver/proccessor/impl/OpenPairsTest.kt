@@ -5,13 +5,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.overmind.sudokusolver.CellValue
 import org.overmind.sudokusolver.Position
 import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.filepath
 import org.overmind.sudokusolver.processor.CandidatesLose
-import org.overmind.sudokusolver.processor.impl.OpenPairs
 import org.overmind.sudokusolver.processor.ProcessResult
+import org.overmind.sudokusolver.processor.impl.OpenPairs
 
 @DisplayName("OpenPairs")
 class OpenPairsTest {
@@ -30,7 +29,7 @@ class OpenPairsTest {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
 
             Assertions.assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder<CellValue, CellValue> {
+                    .isEqualTo(ProcessResult.builder {
                         CandidatesLose(5) at Position(4, 1)
                         CandidatesLose(5) at Position(4, 2)
 

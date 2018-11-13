@@ -1,12 +1,15 @@
 package org.overmind.sudokusolver.processor.impl
 
-import org.overmind.sudokusolver.*
+import org.overmind.sudokusolver.CandidatesCellValue
+import org.overmind.sudokusolver.CellValue
+import org.overmind.sudokusolver.Sudoku
+import org.overmind.sudokusolver.powerSet
 import org.overmind.sudokusolver.processor.CandidatesLose
 import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.SudokuProcessor
 
-class OpenPairs : SudokuProcessor<CellValue, CellValue> {
-    override fun process(sudoku: Sudoku<CellValue>) = ProcessResult.builder<CellValue, CellValue> {
+class OpenPairs : SudokuProcessor {
+    override fun process(sudoku: Sudoku<CellValue>) = ProcessResult.builder {
         sudoku.groups.forEach { group ->
             val candidatesCells = group.cells()
                     .filter { cell ->

@@ -1,14 +1,18 @@
 package org.overmind.sudokusolver.processor.impl
 
-import org.overmind.sudokusolver.*
-import org.overmind.sudokusolver.processor.ProcessResult
-import org.overmind.sudokusolver.processor.SetupCandidates
-import org.overmind.sudokusolver.processor.SudokuProcessor
+import org.overmind.sudokusolver.CandidatesCellValue
+import org.overmind.sudokusolver.CellValue
+import org.overmind.sudokusolver.EmptyCellValue
+import org.overmind.sudokusolver.NumberCellValue
+import org.overmind.sudokusolver.RawCellValue
+import org.overmind.sudokusolver.Sudoku
 
-class CandidatesProcessor : SudokuProcessor<RawCellValue, CellValue> {
-    override fun process(sudoku: Sudoku<RawCellValue>) = ProcessResult.builder<RawCellValue, CellValue> {
-        sudoku.cells.values.forEach { cell ->
-            if (cell.value is EmptyCellValue) {
+class CandidatesProcessor {
+    fun process(sudoku: Sudoku<RawCellValue>) : Sudoku<CellValue> {
+        return sudoku.map { cell ->
+            val value = cell.value
+
+            if (value is EmptyCellValue) {
                 val candidates = (1..9).toMutableSet()
 
                 cell.neighbors()
@@ -18,7 +22,9 @@ class CandidatesProcessor : SudokuProcessor<RawCellValue, CellValue> {
                             candidates.remove(it)
                         }
 
-                SetupCandidates(candidates) at cell.position
+                return@map CandidatesCellValue(candidates)
+            } else {
+                return@map value as CellValue
             }
         }
     }

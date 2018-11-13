@@ -1,31 +1,23 @@
 package org.overmind.sudokusolver.processor
 
-import org.overmind.sudokusolver.*
+import org.overmind.sudokusolver.CandidatesCellValue
+import org.overmind.sudokusolver.CellValue
+import org.overmind.sudokusolver.NumberCellValue
+import org.overmind.sudokusolver.Position
+import org.overmind.sudokusolver.Sudoku
 
-sealed class Action<V : RawCellValue> {
-    abstract fun perform(cellValue: V): V
+interface Action {
+    fun perform(cellValue: CellValue): CellValue
 
-    abstract fun merge(another: Action<*>): Action<V>
+    fun merge(another: Action): Action
 }
 
-data class SetupCandidates(val candidates: Set<Int>) : Action<RawCellValue>() {
-    constructor(vararg candidates: Int) : this(candidates.toSet())
-
-    override fun perform(cellValue: RawCellValue): CandidatesCellValue {
-        return CandidatesCellValue(candidates)
-    }
-
-    override fun merge(another: Action<out RawCellValue>): Action<RawCellValue> {
-        throw IllegalArgumentException("SetupCandidates can't be merged with anything")
-    }
-}
-
-data class NumberPut(val number: Int) : Action<CellValue>() {
+data class NumberPut(val number: Int) : Action {
     override fun perform(cellValue: CellValue): NumberCellValue {
         return NumberCellValue(number)
     }
 
-    override fun merge(another: Action<*>): Action<CellValue> {
+    override fun merge(another: Action): Action {
         if(another is CandidatesLose) {
             return this
         }
@@ -34,8 +26,8 @@ data class NumberPut(val number: Int) : Action<CellValue>() {
     }
 }
 
-data class CandidatesLose(val candidates: Set<Int>) : Action<CellValue>() {
-    override fun merge(another: Action<*>): Action<CellValue> {
+data class CandidatesLose(val candidates: Set<Int>) : Action {
+    override fun merge(another: Action): Action {
         if(another is NumberPut) {
             return another.merge(this)
         }
@@ -64,19 +56,19 @@ data class CandidatesLose(val candidates: Set<Int>) : Action<CellValue>() {
     }
 }
 
-data class Update<V : RawCellValue>(val position: Position, val action: Action<V>)
+data class Update(val position: Position, val action: Action)
 
-data class ProcessResult<V : RawCellValue, R : V>(val updates: Set<Update<V>>) {
-    interface Builder<V : RawCellValue> {
-        infix fun Action<V>.at(position: Position)
+data class ProcessResult(val updates: Set<Update>) {
+    interface Builder {
+        infix fun Action.at(position: Position)
     }
 
     companion object {
-        fun <V : RawCellValue, R : V> builder(block: Builder<V>.() -> Unit): ProcessResult<V, R> {
-            val updates = mutableSetOf<Update<V>>()
+        fun  builder(block: Builder.() -> Unit): ProcessResult {
+            val updates = mutableSetOf<Update>()
 
-            object : Builder<V> {
-                override fun Action<V>.at(position: Position) {
+            object : Builder {
+                override fun Action.at(position: Position) {
                     updates.add(Update(position, this))
                 }
 
@@ -86,18 +78,17 @@ data class ProcessResult<V : RawCellValue, R : V>(val updates: Set<Update<V>>) {
         }
     }
 
-    fun process(sudoku: Sudoku<V>): Sudoku<R> {
-        @Suppress("UNCHECKED_CAST")
+    fun process(sudoku: Sudoku<CellValue>): Sudoku<CellValue> {
         return sudoku.map { cell ->
             updates
                     .asSequence()
                     .filter { (position, _) ->
                         cell.position == position
                     }
-                    .map(Update<V>::action)
-                    .fold(null as Action<V>?) { left, right ->
+                    .map(Update::action)
+                    .fold(null as Action?) { left, right ->
                         left?.merge(right)
                     } ?.perform(cell.value) ?: cell.value
-        } as Sudoku<R>
+        }
     }
 }
