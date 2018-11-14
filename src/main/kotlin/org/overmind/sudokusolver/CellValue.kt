@@ -1,10 +1,6 @@
 package org.overmind.sudokusolver
 
-sealed class RawCellValue
-
-sealed class CellValue : RawCellValue()
-
-object EmptyCellValue : RawCellValue()
+sealed class CellValue
 
 data class NumberCellValue(val number: Int) : CellValue()
 

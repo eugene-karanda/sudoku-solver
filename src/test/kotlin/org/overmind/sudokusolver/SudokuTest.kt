@@ -40,6 +40,7 @@ class SudokuTest {
             }
         }
 
+/*
         @Nested
         @DisplayName("rawFromFile")
         inner class RawFromFile {
@@ -67,5 +68,6 @@ class SudokuTest {
                 }
             }
         }
+*/
     }
 }

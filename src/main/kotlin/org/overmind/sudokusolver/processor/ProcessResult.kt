@@ -1,10 +1,6 @@
 package org.overmind.sudokusolver.processor
 
-import org.overmind.sudokusolver.CandidatesCellValue
-import org.overmind.sudokusolver.CellValue
-import org.overmind.sudokusolver.NumberCellValue
-import org.overmind.sudokusolver.Position
-import org.overmind.sudokusolver.Sudoku
+import org.overmind.sudokusolver.*
 
 interface Action {
     fun perform(cellValue: CellValue): CellValue
@@ -78,7 +74,7 @@ data class ProcessResult(val updates: Set<Update>) {
         }
     }
 
-    fun process(sudoku: Sudoku<CellValue>): Sudoku<CellValue> {
+    fun process(sudoku: Sudoku): Sudoku {
         return sudoku.map { cell ->
             updates
                     .asSequence()

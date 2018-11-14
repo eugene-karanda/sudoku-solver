@@ -1,18 +1,18 @@
 package org.overmind.sudokusolver
 
-interface Group<V : RawCellValue> {
-    fun values(): Sequence<V>
+interface Group {
+    fun values(): Sequence<CellValue>
 
-    fun cells(): Sequence<Cell<V>>
+    fun cells(): Sequence<Cell>
 }
 
-class Row<V : RawCellValue>(private val rowIndex: Int, private val sudoku: Sudoku<V>) : Group<V> {
-    override fun values(): Sequence<V> {
+class Row(private val rowIndex: Int, private val sudoku: Sudoku) : Group {
+    override fun values(): Sequence<CellValue> {
         return sudoku.matrix[rowIndex]
                 .asSequence()
     }
 
-    override fun cells(): Sequence<Cell<V>> {
+    override fun cells(): Sequence<Cell> {
         return sudoku.cells.asSequence()
                 .filter { (position, _) ->
                     position.rowIndex == rowIndex
@@ -23,8 +23,8 @@ class Row<V : RawCellValue>(private val rowIndex: Int, private val sudoku: Sudok
     }
 }
 
-class Column<V : RawCellValue>(private val columnIndex: Int, private val sudoku: Sudoku<V>) : Group<V> {
-    override fun values(): Sequence<V> {
+class Column(private val columnIndex: Int, private val sudoku: Sudoku) : Group {
+    override fun values(): Sequence<CellValue> {
         return ((0 until 9))
                 .asSequence()
                 .map { innerRowIndex ->
@@ -32,7 +32,7 @@ class Column<V : RawCellValue>(private val columnIndex: Int, private val sudoku:
                 }
     }
 
-    override fun cells() : Sequence<Cell<V>> {
+    override fun cells() : Sequence<Cell> {
         return sudoku.cells.asSequence()
                 .filter { (position, _) ->
                     position.columnIndex == columnIndex
@@ -43,8 +43,8 @@ class Column<V : RawCellValue>(private val columnIndex: Int, private val sudoku:
     }
 }
 
-class Square<V : RawCellValue>(private val squarePosition: SquarePosition, private val sudoku: Sudoku<V>) : Group<V> {
-    override fun values(): Sequence<V> {
+class Square(private val squarePosition: SquarePosition, private val sudoku: Sudoku) : Group {
+    override fun values(): Sequence<CellValue> {
         return PositionInSquare.all
                 .map { innerPosition ->
                     sudoku[
@@ -54,7 +54,7 @@ class Square<V : RawCellValue>(private val squarePosition: SquarePosition, priva
                 }
     }
 
-    override fun cells(): Sequence<Cell<V>> {
+    override fun cells(): Sequence<Cell> {
         return sudoku.cells.asSequence()
                 .filter { (position, _) ->
                     position.squarePosition == squarePosition
@@ -64,7 +64,7 @@ class Square<V : RawCellValue>(private val squarePosition: SquarePosition, priva
                 }
     }
 
-    fun additionalValues(positionInSquare: SquarePosition): Sequence<V> {
+    fun additionalValues(positionInSquare: SquarePosition): Sequence<CellValue> {
         return SquarePosition.all
                 .filter {
                     it.rowIndex != positionInSquare.rowIndex || it.columnIndex != positionInSquare.columnIndex

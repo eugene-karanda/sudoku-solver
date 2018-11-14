@@ -3,38 +3,38 @@ package org.overmind.sudokusolver
 import java.io.FileInputStream
 import java.util.*
 
-data class Sudoku<V : RawCellValue>(val matrix: List<List<V>>) {
-    val rows: List<Row<V>> = List(9) {
+data class Sudoku(val matrix: List<List<CellValue>>) {
+    val rows: List<Row> = List(9) {
         Row(it, this)
     }
 
-    val columns: List<Column<V>> = List(9) {
+    val columns: List<Column> = List(9) {
         Column(it, this)
     }
 
-    val squares: Map<SquarePosition, Square<V>> = SquarePosition.all
+    val squares: Map<SquarePosition, Square> = SquarePosition.all
             .associateBy(
                     { it },
                     { Square(it, this) }
             ).toSortedMap()
 
-    val groups: List<Group<V>> = rows + columns + squares.values
+    val groups: List<Group> = rows + columns + squares.values
 
-    val cells: Map<Position, Cell<V>> = Position.all
+    val cells: Map<Position, Cell> = Position.all
             .associateBy(
                     { it },
                     { Cell(it, this) }
             ).toSortedMap()
 
-    operator fun get(rowIndex: Int, columnIndex: Int): V {
+    operator fun get(rowIndex: Int, columnIndex: Int): CellValue {
         return matrix[rowIndex][columnIndex]
     }
 
-    operator fun get(position: Position): V {
+    operator fun get(position: Position): CellValue {
         return matrix[position.rowIndex][position.columnIndex]
     }
 
-    fun <R : V> map(block: (Cell<V>) -> R) : Sudoku<R> {
+    fun map(block: (Cell) -> CellValue) : Sudoku {
         return List(9) { rowIndex ->
             List(9) { columnIndex ->
                 val position = Position(rowIndex, columnIndex)
@@ -45,7 +45,7 @@ data class Sudoku<V : RawCellValue>(val matrix: List<List<V>>) {
     }
 
     companion object {
-        fun fromFile(path: String): Sudoku<CellValue> {
+        fun fromFile(path: String): Sudoku {
             val fis = FileInputStream(path)
             val scanner = Scanner(fis)
             val charMatrix = mutableListOf<String>()
@@ -96,33 +96,6 @@ data class Sudoku<V : RawCellValue>(val matrix: List<List<V>>) {
                     return@rowList CandidatesCellValue(candidates)
                 }
             }
-
-            return Sudoku(matrix)
-        }
-
-        fun rawFromFile(path: String): Sudoku<RawCellValue> {
-            val fis = FileInputStream(path)
-            val scanner = Scanner(fis)
-            val matrix = mutableListOf<MutableList<RawCellValue>>()
-
-            for (rowGroupIndex in 0 until 3) {
-                scanner.nextLine()
-                for (rowIndex in 0 until 3) {
-                    val line = scanner.nextLine()
-                    line.filter {
-                        it.isDigit() || it.isWhitespace()
-                    }.map {
-                        when {
-                            it.isDigit() -> NumberCellValue(Character.digit(it, 10))
-                            it == ' ' -> EmptyCellValue
-                            else -> throw IllegalArgumentException("Unknown char - '$it'")
-                        }
-                    }.also {
-                        matrix.add(it.toMutableList())
-                    }
-                }
-            }
-            scanner.nextLine()
 
             return Sudoku(matrix)
         }

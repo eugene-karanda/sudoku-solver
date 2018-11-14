@@ -6,7 +6,7 @@ infix fun Boolean.ifRun(block: () -> Unit) {
     }
 }
 
-fun <C : RawCellValue> Sequence<C>.hasCandidate(candidate: Int): Boolean {
+fun <V : CellValue> Sequence<V>.hasCandidate(candidate: Int): Boolean {
     return this.any {
         return@any when (it) {
             is CandidatesCellValue -> candidate in it.candidates
@@ -16,7 +16,7 @@ fun <C : RawCellValue> Sequence<C>.hasCandidate(candidate: Int): Boolean {
     }
 }
 
-fun <C : RawCellValue> Sequence<C>.except(cell: C): Sequence<C> {
+fun <V : CellValue> Sequence<V>.except(cell: V): Sequence<V> {
     return this.filter {
         it !== cell
     }

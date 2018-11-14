@@ -1,34 +1,34 @@
 package org.overmind.sudokusolver
 
-data class Cell<V : RawCellValue>(val position: Position, private val sudoku: Sudoku<V>) {
-    val row: Row<V> = sudoku.rows[position.rowIndex]
+data class Cell(val position: Position, private val sudoku: Sudoku) {
+    val row: Row = sudoku.rows[position.rowIndex]
 
-    val column: Column<V> = sudoku.columns[position.columnIndex]
+    val column: Column = sudoku.columns[position.columnIndex]
 
-    val square: Square<V> = sudoku.squares[position.squarePosition]!!
+    val square: Square = sudoku.squares[position.squarePosition]!!
 
-    val value: V = sudoku[position]
+    val value: CellValue = sudoku[position]
 
-    private fun rowNeighbors(): Sequence<V> {
+    private fun rowNeighbors(): Sequence<CellValue> {
         return row.values()
                 .except(value)
     }
 
-    private fun columnNeighbors(): Sequence<V> {
+    private fun columnNeighbors(): Sequence<CellValue> {
         return column.values()
                 .except(value)
     }
 
-    private fun squareNeighbors(): Sequence<V> {
+    private fun squareNeighbors(): Sequence<CellValue> {
         return square.values()
                 .except(value)
     }
 
-    fun neighbors(): Sequence<V> {
+    fun neighbors(): Sequence<CellValue> {
         return rowNeighbors() + columnNeighbors() + square.additionalValues(position.positionInSquare)
     }
 
-    fun neighborsGroups(): Sequence<Sequence<V>> {
+    fun neighborsGroups(): Sequence<Sequence<CellValue>> {
         return sequenceOf(
                 rowNeighbors(),
                 columnNeighbors(),

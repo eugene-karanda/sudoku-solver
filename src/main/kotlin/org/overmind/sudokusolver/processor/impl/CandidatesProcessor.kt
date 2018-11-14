@@ -1,12 +1,6 @@
 package org.overmind.sudokusolver.processor.impl
 
-import org.overmind.sudokusolver.CandidatesCellValue
-import org.overmind.sudokusolver.CellValue
-import org.overmind.sudokusolver.EmptyCellValue
-import org.overmind.sudokusolver.NumberCellValue
-import org.overmind.sudokusolver.RawCellValue
-import org.overmind.sudokusolver.Sudoku
-
+/*
 class CandidatesProcessor {
     fun process(sudoku: Sudoku<RawCellValue>) : Sudoku<CellValue> {
         return sudoku.map { cell ->
@@ -28,4 +22,4 @@ class CandidatesProcessor {
             }
         }
     }
-}
+}*/
