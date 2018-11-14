@@ -1,6 +1,6 @@
 package org.overmind.sudokusolver.processor.impl
 
-import org.overmind.sudokusolver.CandidatesCellValue
+import org.overmind.sudokusolver.CandidatesCell
 import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.powerSet
 import org.overmind.sudokusolver.processor.CandidatesLose
@@ -11,9 +11,9 @@ class OpenPairs : SudokuProcessor {
     override fun process(sudoku: Sudoku) = ProcessResult.builder {
         sudoku.groups.forEach { group ->
             val candidatesCells = group.cells()
+                    .filterIsInstance<CandidatesCell>()
                     .filter { cell ->
-                        cell.value is CandidatesCellValue
-                                && cell.value.candidates.size >= 2
+                        cell.candidates.size >= 2
                     }
                     .toSet()
 
@@ -21,12 +21,11 @@ class OpenPairs : SudokuProcessor {
                     .asSequence()
                     .filter { it.size in (2 until 5) }
                     .map { set ->
-                        val positions = set.map {
-                            it.position
-                        }
+                        val positions = set.map(CandidatesCell::position)
 
-                        val candidates = set.asSequence()
-                                .map { (it.value as CandidatesCellValue).candidates }
+                        val candidates = set
+                                .asSequence()
+                                .map(CandidatesCell::candidates)
                                 .reduce { left, right ->
                                     left + right
                                 }
@@ -39,11 +38,9 @@ class OpenPairs : SudokuProcessor {
                     .forEach { (positionsOfSet, candidatesOfSet) ->
                         candidatesCells.filter { cell ->
                             cell.position !in positionsOfSet
-                        }.map {
-                            it.position to (it.value as CandidatesCellValue).candidates
-                        }.forEach { (position, candidates) ->
-                            val lostCandidates = candidates.intersect(candidatesOfSet)
-                            CandidatesLose(lostCandidates) at position
+                        }.forEach { cell ->
+                            val lostCandidates = cell.candidates.intersect(candidatesOfSet)
+                            CandidatesLose(lostCandidates) at cell.position
                         }
                     }
         }

@@ -3,18 +3,18 @@ package org.overmind.sudokusolver.processor
 import org.overmind.sudokusolver.*
 
 interface Action {
-    fun perform(cellValue: CellValue): CellValue
+    fun perform(cellValue: Cell): CellValue
 
     fun merge(another: Action): Action
 }
 
 data class NumberPut(val number: Int) : Action {
-    override fun perform(cellValue: CellValue): NumberCellValue {
+    override fun perform(cellValue: Cell): NumberCellValue {
         return NumberCellValue(number)
     }
 
     override fun merge(another: Action): Action {
-        if(another is CandidatesLose) {
+        if (another is CandidatesLose) {
             return this
         }
 
@@ -23,22 +23,10 @@ data class NumberPut(val number: Int) : Action {
 }
 
 data class CandidatesLose(val candidates: Set<Int>) : Action {
-    override fun merge(another: Action): Action {
-        if(another is NumberPut) {
-            return another.merge(this)
-        }
-
-        if(another is CandidatesLose) {
-            return CandidatesLose(candidates + another.candidates)
-        }
-
-        throw IllegalArgumentException("CandidatesLose can't be merged with ${another::class}")
-    }
-
     constructor(vararg candidates: Int) : this(candidates.toSet())
 
-    override fun perform(cellValue: CellValue): CellValue {
-        if(cellValue is CandidatesCellValue) {
+    override fun perform(cellValue: Cell): CellValue {
+        if (cellValue is CandidatesCell) {
             return cellValue.candidates
                     .asSequence()
                     .filter {
@@ -50,6 +38,18 @@ data class CandidatesLose(val candidates: Set<Int>) : Action {
 
         throw IllegalArgumentException("perform can't be executed on ${cellValue::class}")
     }
+
+    override fun merge(another: Action): Action {
+        if (another is NumberPut) {
+            return another.merge(this)
+        }
+
+        if (another is CandidatesLose) {
+            return CandidatesLose(candidates + another.candidates)
+        }
+
+        throw IllegalArgumentException("CandidatesLose can't be merged with ${another::class}")
+    }
 }
 
 data class Update(val position: Position, val action: Action)
@@ -60,7 +60,7 @@ data class ProcessResult(val updates: Set<Update>) {
     }
 
     companion object {
-        fun  builder(block: Builder.() -> Unit): ProcessResult {
+        fun builder(block: Builder.() -> Unit): ProcessResult {
             val updates = mutableSetOf<Update>()
 
             object : Builder {
@@ -84,7 +84,7 @@ data class ProcessResult(val updates: Set<Update>) {
                     .map(Update::action)
                     .fold(null as Action?) { left, right ->
                         left?.merge(right)
-                    } ?.perform(cell.value) ?: cell.value
+                    }?.perform(cell)
         }
     }
 }

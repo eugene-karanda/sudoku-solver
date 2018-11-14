@@ -3,7 +3,7 @@ package org.overmind.sudokusolver
 import java.io.FileInputStream
 import java.util.*
 
-data class Sudoku(val matrix: List<List<CellValue>>) {
+class Sudoku(matrix: List<List<CellValue>>) {
     val rows: List<Row> = List(9) {
         Row(it, this)
     }
@@ -20,26 +20,24 @@ data class Sudoku(val matrix: List<List<CellValue>>) {
 
     val groups: List<Group> = rows + columns + squares.values
 
-    val cells: Map<Position, Cell> = Position.all
+    private val cellsMap: Map<Position, Cell> = Position.all
             .associateBy(
                     { it },
-                    { Cell(it, this) }
+                    { matrix[it.rowIndex][it.columnIndex].toCell(it, this) }
             ).toSortedMap()
 
-    operator fun get(rowIndex: Int, columnIndex: Int): CellValue {
-        return matrix[rowIndex][columnIndex]
+    val cells: List<Cell> = cellsMap.values.toList()
+
+    operator fun get(rowIndex: Int, columnIndex: Int): CellValue? {
+        return cellsMap[Position(rowIndex, columnIndex)]?.value
     }
 
-    operator fun get(position: Position): CellValue {
-        return matrix[position.rowIndex][position.columnIndex]
-    }
-
-    fun map(block: (Cell) -> CellValue) : Sudoku {
+    fun map(block: (Cell) -> CellValue?): Sudoku {
         return List(9) { rowIndex ->
             List(9) { columnIndex ->
                 val position = Position(rowIndex, columnIndex)
-                val cell = cells[position]!!
-                block(cell)
+                val cell = cellsMap[position]!!
+                block(cell) ?: cell.value
             }
         }.run(::Sudoku)
     }
@@ -65,7 +63,7 @@ data class Sudoku(val matrix: List<List<CellValue>>) {
             scanner.nextLine()
 
             val matrix = List(9) matrixList@{ rowIndex ->
-                MutableList(9) rowList@{ columnIndex ->
+                List(9) rowList@{ columnIndex ->
                     val leftTopChar = charMatrix[rowIndex * 3][columnIndex * 3]
                     if (leftTopChar == '*') {
                         val centralChar = charMatrix[rowIndex * 3 + 1][columnIndex * 3 + 1]

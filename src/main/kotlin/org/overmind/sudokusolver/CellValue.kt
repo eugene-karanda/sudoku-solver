@@ -1,9 +1,20 @@
 package org.overmind.sudokusolver
 
-sealed class CellValue
+interface CellValue {
+    fun toCell(position: Position, sudoku: Sudoku): Cell
+}
 
-data class NumberCellValue(val number: Int) : CellValue()
 
-data class CandidatesCellValue constructor(val candidates: Set<Int>): CellValue() {
+data class NumberCellValue(val number: Int) : CellValue {
+    override fun toCell(position: Position, sudoku: Sudoku): Cell {
+        return NumberCell(number, position, sudoku, this)
+    }
+}
+
+data class CandidatesCellValue(val candidates: Set<Int>) : CellValue {
     constructor(vararg candidates: Int) : this(candidates.toSet())
+
+    override fun toCell(position: Position, sudoku: Sudoku): Cell {
+        return CandidatesCell(candidates, position, sudoku, this)
+    }
 }

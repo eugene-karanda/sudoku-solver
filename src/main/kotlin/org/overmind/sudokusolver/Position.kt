@@ -1,7 +1,7 @@
 package org.overmind.sudokusolver
 
-data class Position(val rowIndex: Int, val columnIndex: Int) : Comparable<Position> {
-    val positionInSquare: SquarePosition = SquarePosition(rowIndex % 3, columnIndex % 3)
+data class Position private constructor(val rowIndex: Int, val columnIndex: Int) : Comparable<Position> {
+    val positionInSquare: PositionInSquare = PositionInSquare(rowIndex % 3, columnIndex % 3)
 
     val squarePosition: SquarePosition = SquarePosition(rowIndex / 3, columnIndex / 3)
 
@@ -10,6 +10,7 @@ data class Position(val rowIndex: Int, val columnIndex: Int) : Comparable<Positi
             { it.columnIndex }
     )
     companion object {
+        private val cache: MutableMap<Pair<Int, Int>, Position> = mutableMapOf()
 
         val all: Sequence<Position> = (0 until 9)
                 .asSequence()
@@ -21,6 +22,11 @@ data class Position(val rowIndex: Int, val columnIndex: Int) : Comparable<Positi
                             }
                 }
 
+        operator fun invoke(rowIndex: Int, columnIndex: Int): Position {
+            return cache.getOrPut(rowIndex to columnIndex) {
+                Position(rowIndex, columnIndex)
+            }
+        }
     }
 }
 
@@ -30,6 +36,13 @@ data class SquarePosition(val rowIndex: Int, val columnIndex: Int) : Comparable<
             { it.rowIndex },
             { it.columnIndex }
     )
+
+    infix fun and(positionInSquare: PositionInSquare): Position {
+        return Position(
+                rowIndex * 3 + positionInSquare.rowIndex,
+                columnIndex * 3 + positionInSquare.columnIndex
+        )
+    }
 
     companion object {
         val all: Sequence<SquarePosition> = (0 until 3)

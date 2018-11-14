@@ -18,21 +18,21 @@ class SudokuTest {
 
             @Test
             fun `should return RawSudoku`() {
-                val rawSudoku = companion.fromFile(filepath("/sudoku.txt"))
+                val sudoku = companion.fromFile(filepath("/sudoku.txt"))
 
                 SoftAssertions.assertSoftly {
-                    it.assertThat(rawSudoku[0, 2])
+                    it.assertThat(sudoku[0, 2])
                             .isEqualTo(CandidatesCellValue(2, 5, 6, 9))
 
-                    it.assertThat(rawSudoku[5, 4])
+                    it.assertThat(sudoku[5, 4])
                             .isEqualTo(CandidatesCellValue(1, 5, 9))
 
-                    it.assertThat(rawSudoku[5, 6])
+                    it.assertThat(sudoku[5, 6])
                             .isEqualTo(
                                     NumberCellValue(6)
                             )
 
-                    it.assertThat(rawSudoku[8, 7])
+                    it.assertThat(sudoku[8, 7])
                             .isEqualTo(
                                     NumberCellValue(2)
                             )

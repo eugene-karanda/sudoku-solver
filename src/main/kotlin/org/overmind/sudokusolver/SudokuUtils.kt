@@ -6,19 +6,18 @@ infix fun Boolean.ifRun(block: () -> Unit) {
     }
 }
 
-fun <V : CellValue> Sequence<V>.hasCandidate(candidate: Int): Boolean {
+fun Sequence<Cell>.hasCandidate(candidate: Int): Boolean {
     return this.any {
-        return@any when (it) {
-            is CandidatesCellValue -> candidate in it.candidates
-            is NumberCellValue -> candidate == it.number
+        when (it) {
+            is CandidatesCell -> candidate in it.candidates
             else -> false
         }
     }
 }
 
-fun <V : CellValue> Sequence<V>.except(cell: V): Sequence<V> {
+fun Sequence<Cell>.except(cell: Cell): Sequence<Cell> {
     return this.filter {
-        it !== cell
+        it.position != cell.position
     }
 }
 
