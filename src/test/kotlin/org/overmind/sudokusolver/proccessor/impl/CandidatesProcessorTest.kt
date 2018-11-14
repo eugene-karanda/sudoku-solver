@@ -27,7 +27,7 @@ class CandidatesProcessorTest {
     @DisplayName("process")
     inner class Process {
         @Test
-        fun `should calculate candidates for each empty cell`() {
+        fun `should setup candidates for each empty cell`() {
             val sudoku = Sudoku.rawFromFile(filepath("/raw-sudoku.txt"))
 
             assertThat(subject.process(sudoku))

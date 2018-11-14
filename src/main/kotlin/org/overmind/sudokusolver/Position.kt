@@ -1,6 +1,6 @@
 package org.overmind.sudokusolver
 
-data class Position private constructor(val rowIndex: Int, val columnIndex: Int) : Comparable<Position> {
+data class Position(val rowIndex: Int, val columnIndex: Int) : Comparable<Position> {
     val positionInSquare: PositionInSquare = PositionInSquare(rowIndex % 3, columnIndex % 3)
 
     val squarePosition: SquarePosition = SquarePosition(rowIndex / 3, columnIndex / 3)
@@ -10,8 +10,6 @@ data class Position private constructor(val rowIndex: Int, val columnIndex: Int)
             { it.columnIndex }
     )
     companion object {
-        private val cache: MutableMap<Pair<Int, Int>, Position> = mutableMapOf()
-
         val all: Sequence<Position> = (0 until 9)
                 .asSequence()
                 .flatMap { rowIndex ->
@@ -21,12 +19,6 @@ data class Position private constructor(val rowIndex: Int, val columnIndex: Int)
                                 Position(rowIndex, columnIndex)
                             }
                 }
-
-        operator fun invoke(rowIndex: Int, columnIndex: Int): Position {
-            return cache.getOrPut(rowIndex to columnIndex) {
-                Position(rowIndex, columnIndex)
-            }
-        }
     }
 }
 
@@ -36,13 +28,6 @@ data class SquarePosition(val rowIndex: Int, val columnIndex: Int) : Comparable<
             { it.rowIndex },
             { it.columnIndex }
     )
-
-    infix fun and(positionInSquare: PositionInSquare): Position {
-        return Position(
-                rowIndex * 3 + positionInSquare.rowIndex,
-                columnIndex * 3 + positionInSquare.columnIndex
-        )
-    }
 
     companion object {
         val all: Sequence<SquarePosition> = (0 until 3)
