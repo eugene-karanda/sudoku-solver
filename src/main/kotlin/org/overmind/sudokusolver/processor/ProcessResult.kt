@@ -8,6 +8,18 @@ interface Action {
     fun merge(another: Action): Action
 }
 
+data class SetupCandidates(val candidates: Set<Int>) : Action {
+    constructor(vararg candidates: Int) : this(candidates.toSet())
+
+    override fun perform(cellValue: Cell): CandidatesCellValue {
+        return CandidatesCellValue(candidates)
+    }
+
+    override fun merge(another: Action): Action {
+        throw IllegalArgumentException("SetupCandidates can't be merged with ${another::class}")
+    }
+}
+
 data class NumberPut(val number: Int) : Action {
     override fun perform(cellValue: Cell): NumberCellValue {
         return NumberCellValue(number)

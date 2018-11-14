@@ -1,25 +1,24 @@
 package org.overmind.sudokusolver.processor.impl
 
-/*
-class CandidatesProcessor {
-    fun process(sudoku: Sudoku<RawCellValue>) : Sudoku<CellValue> {
-        return sudoku.map { cell ->
-            val value = cell.value
+import org.overmind.sudokusolver.EmptyCell
+import org.overmind.sudokusolver.NumberCell
+import org.overmind.sudokusolver.Sudoku
+import org.overmind.sudokusolver.processor.ProcessResult
+import org.overmind.sudokusolver.processor.SetupCandidates
+import org.overmind.sudokusolver.processor.SudokuProcessor
 
-            if (value is EmptyCellValue) {
-                val candidates = (1..9).toMutableSet()
+class CandidatesProcessor : SudokuProcessor {
+    override fun process(sudoku: Sudoku) = ProcessResult.builder {
+        sudoku.cells
+                .asSequence()
+                .filterIsInstance<EmptyCell>()
+                .forEach {cell ->
+                    val occurredCandidates = cell.neighbors()
+                            .filterIsInstance<NumberCell>()
+                            .map(NumberCell::number)
+                            .toSet()
 
-                cell.neighbors()
-                        .filterIsInstance<NumberCellValue>()
-                        .map(NumberCellValue::number)
-                        .forEach {
-                            candidates.remove(it)
-                        }
-
-                return@map CandidatesCellValue(candidates)
-            } else {
-                return@map value as CellValue
-            }
-        }
+                    SetupCandidates((1.. 9).toSet() - occurredCandidates) at cell.position
+                }
     }
-}*/
+}

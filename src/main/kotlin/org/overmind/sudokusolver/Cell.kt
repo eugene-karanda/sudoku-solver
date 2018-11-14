@@ -59,10 +59,16 @@ data class BaseCell(override val position: Position, val sudoku: Sudoku, overrid
     }
 }
 
+class EmptyCell(
+        position: Position,
+        sudoku: Sudoku,
+        value: CellValue
+) : Cell by BaseCell(position, sudoku, value)
+
 class NumberCell(
         val number: Int,
-        override val position: Position,
-        val sudoku: Sudoku,
+        position: Position,
+        sudoku: Sudoku,
         value: CellValue
 ) : Cell by BaseCell(position, sudoku, value)
 

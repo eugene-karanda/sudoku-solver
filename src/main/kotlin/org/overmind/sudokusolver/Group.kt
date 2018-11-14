@@ -36,8 +36,8 @@ class Square(private val squarePosition: SquarePosition, private val sudoku: Sud
     fun additionalValues(positionInSquare: PositionInSquare): Sequence<Cell> {
         return cells()
                 .filter {
-                    it.position.positionInSquare.rowIndex == positionInSquare.rowIndex
-                            || it.position.positionInSquare.columnIndex == positionInSquare.columnIndex
+                    it.position.positionInSquare.rowIndex != positionInSquare.rowIndex
+                            || it.position.positionInSquare.columnIndex != positionInSquare.columnIndex
                 }
     }
 }

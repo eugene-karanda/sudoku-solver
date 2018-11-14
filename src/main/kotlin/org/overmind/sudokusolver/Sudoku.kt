@@ -43,6 +43,33 @@ class Sudoku(matrix: List<List<CellValue>>) {
     }
 
     companion object {
+        fun rawFromFile(path: String): Sudoku {
+            val fis = FileInputStream(path)
+            val scanner = Scanner(fis)
+            val matrix = mutableListOf<List<CellValue>>()
+
+            for (rowGroupIndex in 0 until 3) {
+                scanner.nextLine()
+                for (rowIndex in 0 until 3) {
+                    val line = scanner.nextLine()
+                    line.filter {
+                        it.isDigit() || it.isWhitespace()
+                    }.map {
+                        when {
+                            it.isDigit() -> NumberCellValue(Character.digit(it, 10))
+                            it == ' ' -> EmptyCellValue
+                            else -> throw IllegalArgumentException("Unknown char - '$it'")
+                        }
+                    }.also {
+                        matrix.add(it)
+                    }
+                }
+            }
+            scanner.nextLine()
+
+            return Sudoku(matrix)
+        }
+
         fun fromFile(path: String): Sudoku {
             val fis = FileInputStream(path)
             val scanner = Scanner(fis)
