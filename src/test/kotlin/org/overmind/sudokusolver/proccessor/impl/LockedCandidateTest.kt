@@ -8,32 +8,35 @@ import org.junit.jupiter.api.Test
 import org.overmind.sudokusolver.Position
 import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.filepath
-import org.overmind.sudokusolver.processor.NumberPut
+import org.overmind.sudokusolver.processor.CandidatesLose
 import org.overmind.sudokusolver.processor.ProcessResult
-import org.overmind.sudokusolver.processor.impl.Singletons
+import org.overmind.sudokusolver.processor.impl.LockedCandidate
 import kotlin.properties.Delegates.notNull
 
-@DisplayName("Singletons")
-class SingletonsTest {
-    private var subject: Singletons by notNull()
+@DisplayName("LockedCandidate")
+class LockedCandidateTest {
+    private var subject: LockedCandidate by notNull()
 
     @BeforeEach
     fun setUp() {
-        this.subject = Singletons()
+        this.subject = LockedCandidate()
     }
 
     @Nested
     @DisplayName("process")
     inner class Process {
         @Test
-        fun `should put number in each cells with single candidate`() {
+        fun `should lose candidate in each group if candidate occur only in this sub-group of any square`() {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
 
             Assertions.assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {
-                        NumberPut(7) at Position(3, 0)
-                        NumberPut(8) at Position(3, 3)
-                        NumberPut(5) at Position(5, 5)
+                        CandidatesLose(9) at Position(0, 4)
+                        CandidatesLose(9) at Position(1, 4)
+                        CandidatesLose(4) at Position(2, 1)
+                        CandidatesLose(2) at Position(2, 6)
+                        CandidatesLose(2) at Position(6, 4)
+                        CandidatesLose(2) at Position(7, 4)
                     })
         }
     }

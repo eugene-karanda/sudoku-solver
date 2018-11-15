@@ -11,10 +11,11 @@ import org.overmind.sudokusolver.filepath
 import org.overmind.sudokusolver.processor.NumberPut
 import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.impl.HiddenSingletons
+import kotlin.properties.Delegates.notNull
 
 @DisplayName("HiddenSingletons")
 class HiddenSingletonsTest {
-    private lateinit var subject: HiddenSingletons
+    private var subject: HiddenSingletons by notNull()
 
     @BeforeEach
     fun setUp() {

@@ -11,10 +11,11 @@ import org.overmind.sudokusolver.filepath
 import org.overmind.sudokusolver.processor.CandidatesLose
 import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.impl.OpenPairs
+import kotlin.properties.Delegates.notNull
 
 @DisplayName("OpenPairs")
 class OpenPairsTest {
-    private lateinit var subject: OpenPairs
+    private var subject: OpenPairs by notNull()
 
     @BeforeEach
     fun setUp() {

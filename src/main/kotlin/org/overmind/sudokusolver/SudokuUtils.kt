@@ -1,7 +1,7 @@
 package org.overmind.sudokusolver
 
 infix fun Boolean.ifRun(block: () -> Unit) {
-    if(this) {
+    if (this) {
         block()
     }
 }
@@ -15,9 +15,19 @@ fun Sequence<Cell>.hasCandidate(candidate: Int): Boolean {
     }
 }
 
-fun Sequence<Cell>.except(cell: Cell): Sequence<Cell> {
+fun <E : SudokuElement<*>> Sequence<E>.except(element: E): Sequence<E> {
     return this.filter {
-        it.position != cell.position
+        it.position != element.position
+                || it.sudoku != element.sudoku
+    }
+}
+
+fun <E : SudokuElement<*>> Sequence<E>.except(elements: Sequence<E>): Sequence<E> {
+    return this.filter {
+        !elements.any { element ->
+            it.position == element.position
+                    && it.sudoku == element.sudoku
+        }
     }
 }
 

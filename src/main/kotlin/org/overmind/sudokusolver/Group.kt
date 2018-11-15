@@ -25,27 +25,43 @@ class Column(private val columnIndex: Int, private val sudoku: Sudoku) : Group {
 }
 
 interface SquareGroup {
+    val square: Square
+
+    val fullGroup: Group
+
     fun cells(): Sequence<Cell>
 }
 
-class SquareRow(val rowIndex: Int) : SquareGroup {
+data class SquareRow(val rowIndex: Int, override val square: Square) : SquareGroup {
+    override val fullGroup: Row = square.sudoku.rows[square.squarePosition.rowIndex * 3 + rowIndex]
+
     override fun cells(): Sequence<Cell> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return square.cells()
+                .filter {
+                    it.position.positionInSquare.rowIndex == rowIndex
+                }
     }
 }
 
-class SquareColumn(val columnIndex: Int) : SquareGroup {
+data class SquareColumn(val columnIndex: Int, override val square: Square) : SquareGroup {
+    override val fullGroup: Column = square.sudoku.columns[square.squarePosition.columnIndex * 3 + columnIndex]
+
     override fun cells(): Sequence<Cell> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return square.cells()
+                .filter {
+                    it.position.positionInSquare.columnIndex == columnIndex
+                }
     }
 }
 
-class Square(private val squarePosition: SquarePosition, private val sudoku: Sudoku) : Group {
-    val rows: List<SquareRow> = List(3, ::SquareRow)
+data class Square(val squarePosition: SquarePosition, val sudoku: Sudoku) : Group {
+    val rows: List<SquareRow> = List(3) {
+        SquareRow(it, this)
+    }
 
-    val columns: List<SquareColumn> = List(3, ::SquareColumn)
-
-    val groups: List<SquareGroup> = rows + columns
+    val columns: List<SquareColumn> = List(3) {
+        SquareColumn(it, this)
+    }
 
     override fun cells(): Sequence<Cell> {
         return sudoku.cells.asSequence()
