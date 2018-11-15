@@ -34,13 +34,14 @@ class OpenPairs : SudokuProcessor {
                     .filter { (cellsSet, candidatesOfSet) ->
                         cellsSet.size >= candidatesOfSet.size
                     }
-                    .forEach { (positionsOfSet, candidatesOfSet) ->
-                        candidatesCells.filter { cell ->
-                            cell.position !in positionsOfSet
-                        }.forEach { cell ->
-                            val lostCandidates = cell.candidates.intersect(candidatesOfSet)
-                            CandidatesLose(lostCandidates) at cell.position
-                        }
+                    .forEach { (cellsSet, candidatesOfSet) ->
+                        candidatesCells
+                                .asSequence()
+                                .except(cellsSet)
+                                .forEach { cell ->
+                                    val lostCandidates = cell.candidates.intersect(candidatesOfSet)
+                                    CandidatesLose(lostCandidates) at cell.position
+                                }
                     }
         }
     }
