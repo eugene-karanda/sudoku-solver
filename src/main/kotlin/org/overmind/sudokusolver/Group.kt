@@ -68,7 +68,6 @@ data class Square(val squarePosition: SquarePosition, val sudoku: Sudoku) : Grou
                 .filter {
                     it.position.squarePosition == squarePosition
                 }
-
     }
 
     fun additionalValues(positionInSquare: PositionInSquare): Sequence<Cell> {
