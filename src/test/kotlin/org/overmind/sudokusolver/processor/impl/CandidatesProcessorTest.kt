@@ -23,11 +23,11 @@ class CandidatesProcessorTest {
     }
 
     @Nested
-    @DisplayName("process")
+    @DisplayName("update")
     inner class Process {
         @Test
         fun `should setup candidates for each empty cell`() {
-            val sudoku = Sudoku.rawFromFile(filepath("/raw-sudoku.txt"))
+            val sudoku = Sudoku.rawFromFile(filepath("raw-sudoku.txt"))
 
             assertThat(subject.process(sudoku))
                     .isEqualTo(

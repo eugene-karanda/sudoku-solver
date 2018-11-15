@@ -22,11 +22,11 @@ class SingletonsTest {
     }
 
     @Nested
-    @DisplayName("process")
+    @DisplayName("update")
     inner class Process {
         @Test
         fun `should put number in each cells with single candidate`() {
-            val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
+            val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {

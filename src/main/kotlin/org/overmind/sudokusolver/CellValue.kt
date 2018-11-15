@@ -8,7 +8,6 @@ object EmptyCellValue : CellValue {
     override fun toCell(position: Position, sudoku: Sudoku): Cell {
         return EmptyCell(position, sudoku, this)
     }
-
 }
 
 data class NumberCellValue(val number: Int) : CellValue {

@@ -1,6 +1,12 @@
 package org.overmind.sudokusolver.processor
 
-import org.overmind.sudokusolver.*
+import org.overmind.sudokusolver.CandidatesCell
+import org.overmind.sudokusolver.CandidatesCellValue
+import org.overmind.sudokusolver.Cell
+import org.overmind.sudokusolver.CellValue
+import org.overmind.sudokusolver.NumberCellValue
+import org.overmind.sudokusolver.Position
+import org.overmind.sudokusolver.Sudoku
 
 interface Action {
     fun perform(cellValue: Cell): CellValue
@@ -86,7 +92,7 @@ data class ProcessResult(val updates: Set<Update>) {
         }
     }
 
-    fun process(sudoku: Sudoku): Sudoku {
+    fun update(sudoku: Sudoku): Sudoku {
         return sudoku.map { cell ->
             updates
                     .asSequence()
@@ -95,7 +101,7 @@ data class ProcessResult(val updates: Set<Update>) {
                     }
                     .map(Update::action)
                     .fold(null as Action?) { left, right ->
-                        left?.merge(right)
+                        left?.merge(right)?:right
                     }?.perform(cell)
         }
     }

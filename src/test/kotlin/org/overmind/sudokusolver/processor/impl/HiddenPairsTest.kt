@@ -22,11 +22,11 @@ class HiddenPairsTest {
     }
 
     @Nested
-    @DisplayName("process")
+    @DisplayName("update")
     inner class Process {
         @Test
         fun `should lose all others candidates in sub-group if candidates occur only in this sub-group of group`() {
-            val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
+            val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {

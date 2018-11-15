@@ -22,11 +22,11 @@ class OpenPairsTest {
     }
 
     @Nested
-    @DisplayName("process")
+    @DisplayName("update")
     inner class Process {
         @Test
         fun `should lose candidates in each group where occur subgroup of size more than candidates in this group`() {
-            val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
+            val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {

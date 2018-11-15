@@ -18,7 +18,7 @@ class SudokuTest {
 
             @Test
             fun `should return RawSudoku`() {
-                val sudoku = companion.fromFile(filepath("/sudoku.txt"))
+                val sudoku = companion.fromFile(filepath("sudoku.txt"))
 
                 SoftAssertions.assertSoftly {
                     it.assertThat(sudoku[0, 2])
@@ -40,14 +40,13 @@ class SudokuTest {
             }
         }
 
-/*
         @Nested
         @DisplayName("rawFromFile")
         inner class RawFromFile {
 
             @Test
             fun `should return RawSudoku`() {
-                val rawSudoku = companion.rawFromFile(filepath("/raw-sudoku.txt"))
+                val rawSudoku = companion.rawFromFile(filepath("raw-sudoku.txt"))
 
                 SoftAssertions.assertSoftly {
                     it.assertThat(rawSudoku[0, 2])
@@ -68,6 +67,5 @@ class SudokuTest {
                 }
             }
         }
-*/
     }
 }

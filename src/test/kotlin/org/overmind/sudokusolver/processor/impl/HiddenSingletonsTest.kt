@@ -22,11 +22,11 @@ class HiddenSingletonsTest {
     }
 
     @Nested
-    @DisplayName("process")
+    @DisplayName("update")
     inner class Process {
         @Test
         fun `should put number in each cell with candidate that occur only in this cell of this cell row(column, square)`() {
-            val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
+            val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {
