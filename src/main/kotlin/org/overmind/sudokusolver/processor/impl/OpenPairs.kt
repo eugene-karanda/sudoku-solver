@@ -2,6 +2,7 @@ package org.overmind.sudokusolver.processor.impl
 
 import org.overmind.sudokusolver.CandidatesCell
 import org.overmind.sudokusolver.Sudoku
+import org.overmind.sudokusolver.except
 import org.overmind.sudokusolver.powerSet
 import org.overmind.sudokusolver.processor.CandidatesLose
 import org.overmind.sudokusolver.processor.ProcessResult
@@ -20,20 +21,18 @@ class OpenPairs : SudokuProcessor {
             candidatesCells.powerSet()
                     .asSequence()
                     .filter { it.size in (2 until 5) }
-                    .map { set ->
-                        val positions = set.map(CandidatesCell::position)
-
-                        val candidates = set
+                    .map { cellsSet ->
+                        val candidates = cellsSet
                                 .asSequence()
                                 .map(CandidatesCell::candidates)
                                 .reduce { left, right ->
                                     left + right
                                 }
 
-                        positions to candidates
+                        cellsSet to candidates
                     }
-                    .filter { (positions, candidatesOfSet) ->
-                        positions.size >= candidatesOfSet.size
+                    .filter { (cellsSet, candidatesOfSet) ->
+                        cellsSet.size >= candidatesOfSet.size
                     }
                     .forEach { (positionsOfSet, candidatesOfSet) ->
                         candidatesCells.filter { cell ->
