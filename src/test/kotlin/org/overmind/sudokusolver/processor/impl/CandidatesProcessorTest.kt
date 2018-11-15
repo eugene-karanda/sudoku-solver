@@ -1,4 +1,4 @@
-package org.overmind.sudokusolver.proccessor.impl
+package org.overmind.sudokusolver.processor.impl
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -10,7 +10,6 @@ import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.filepath
 import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.SetupCandidates
-import org.overmind.sudokusolver.processor.impl.CandidatesProcessor
 import kotlin.properties.Delegates.notNull
 
 

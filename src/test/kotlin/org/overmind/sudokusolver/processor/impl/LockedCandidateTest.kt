@@ -1,6 +1,6 @@
-package org.overmind.sudokusolver.proccessor.impl
+package org.overmind.sudokusolver.processor.impl
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -10,7 +10,6 @@ import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.filepath
 import org.overmind.sudokusolver.processor.CandidatesLose
 import org.overmind.sudokusolver.processor.ProcessResult
-import org.overmind.sudokusolver.processor.impl.LockedCandidate
 import kotlin.properties.Delegates.notNull
 
 @DisplayName("LockedCandidate")
@@ -29,7 +28,7 @@ class LockedCandidateTest {
         fun `should lose candidate in each group if candidate occur only in this sub-group of any square`() {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
 
-            Assertions.assertThat(subject.process(sudoku))
+            assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {
                         CandidatesLose(9) at Position(0, 4)
                         CandidatesLose(9) at Position(1, 4)

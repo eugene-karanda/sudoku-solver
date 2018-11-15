@@ -1,6 +1,6 @@
-package org.overmind.sudokusolver.proccessor.impl
+package org.overmind.sudokusolver.processor.impl
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -10,7 +10,6 @@ import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.filepath
 import org.overmind.sudokusolver.processor.CandidatesLose
 import org.overmind.sudokusolver.processor.ProcessResult
-import org.overmind.sudokusolver.processor.impl.OpenPairs
 import kotlin.properties.Delegates.notNull
 
 @DisplayName("OpenPairs")
@@ -29,7 +28,7 @@ class OpenPairsTest {
         fun `should lose candidates in each group where occur subgroup of size more than candidates in this group`() {
             val sudoku = Sudoku.fromFile(filepath("/sudoku.txt"))
 
-            Assertions.assertThat(subject.process(sudoku))
+            assertThat(subject.process(sudoku))
                     .isEqualTo(ProcessResult.builder {
                         CandidatesLose(5) at Position(4, 1)
                         CandidatesLose(5) at Position(4, 2)
