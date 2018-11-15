@@ -31,6 +31,10 @@ fun <E : SudokuElement<*>> Sequence<E>.except(elements: Sequence<E>): Sequence<E
     }
 }
 
+fun <E : SudokuElement<*>> Sequence<E>.except(elements: Collection<E>): Sequence<E> {
+    return this.except(elements.asSequence())
+}
+
 fun <T> Collection<T>.powerSet(): Set<Set<T>> = powerSet(this, setOf(setOf()))
 
 private tailrec fun <T> powerSet(left: Collection<T>, acc: Set<Set<T>>): Set<Set<T>> = when {
