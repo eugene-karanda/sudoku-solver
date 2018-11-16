@@ -8,7 +8,7 @@ import org.overmind.sudokusolver.processor.SetupCandidates
 import org.overmind.sudokusolver.processor.SudokuProcessor
 
 class CandidatesProcessor : SudokuProcessor {
-    override fun process(sudoku: Sudoku) = ProcessResult.builder {
+    override fun process(sudoku: Sudoku) = ProcessResult {
         sudoku.cells
                 .asSequence()
                 .filterIsInstance<EmptyCell>()

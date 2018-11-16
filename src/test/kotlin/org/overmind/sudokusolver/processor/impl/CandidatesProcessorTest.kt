@@ -31,7 +31,7 @@ class CandidatesProcessorTest {
 
             assertThat(subject.process(sudoku))
                     .isEqualTo(
-                            ProcessResult.builder {
+                            ProcessResult {
                                 SetupCandidates(2, 5, 6, 9) at Position(0, 2)
                                 SetupCandidates(6, 9) at Position(0, 3)
                                 SetupCandidates(3, 5, 6, 9) at Position(0, 4)

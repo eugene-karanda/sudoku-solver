@@ -29,7 +29,7 @@ class LockedCandidateTest {
             val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder {
+                    .isEqualTo(ProcessResult {
                         CandidatesLose(9) at Position(0, 4)
                         CandidatesLose(9) at Position(1, 4)
                         CandidatesLose(4) at Position(2, 1)

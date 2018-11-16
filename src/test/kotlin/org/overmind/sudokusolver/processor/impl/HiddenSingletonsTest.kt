@@ -29,7 +29,7 @@ class HiddenSingletonsTest {
             val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder {
+                    .isEqualTo(ProcessResult {
                         NumberPut(9) at Position(0, 3)
                         NumberPut(2) at Position(0, 8)
                         NumberPut(4) at Position(2, 0)

@@ -29,7 +29,7 @@ class HiddenPairsTest {
             val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder {
+                    .isEqualTo(ProcessResult {
                         CandidatesLose(5) at Position(5, 2)
                         CandidatesLose(1, 5) at Position(5, 7)
 

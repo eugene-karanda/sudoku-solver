@@ -8,7 +8,7 @@ import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.SudokuProcessor
 
 class LockedCandidate : SudokuProcessor {
-    override fun process(sudoku: Sudoku) = ProcessResult.builder {
+    override fun process(sudoku: Sudoku) = ProcessResult {
         sudoku.squares.values
                 .asSequence()
                 .flatMap { square ->

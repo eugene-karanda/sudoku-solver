@@ -16,7 +16,7 @@ class SetupCandidatesTest {
 
     @Test
     fun `update should put CandidatesCell at specified position`() {
-        val processResult = ProcessResult.builder {
+        val processResult = ProcessResult {
             SetupCandidates(2, 5, 6, 9) at Position(0, 2)
         }
 
@@ -30,7 +30,7 @@ class SetupCandidatesTest {
 
     @Test
     fun `update should throw exception if multiple updates occur in any position`() {
-        val processResult = ProcessResult.builder {
+        val processResult = ProcessResult {
             SetupCandidates(2, 5) at Position(0, 2)
             SetupCandidates(6, 9) at Position(0, 2)
         }
@@ -48,7 +48,7 @@ class NumberPutTest {
 
     @Test
     fun `update should put NumberCell at specified position`() {
-        val processResult = ProcessResult.builder {
+        val processResult = ProcessResult {
             NumberPut(5) at Position(0, 2)
         }
 
@@ -68,7 +68,7 @@ class CandidatesLoseTest {
 
     @Test
     fun `update should remove candidates from CandidatesCell at specified position`() {
-        val processResult = ProcessResult.builder {
+        val processResult = ProcessResult {
             CandidatesLose(5, 6) at Position(0, 2)
         }
 

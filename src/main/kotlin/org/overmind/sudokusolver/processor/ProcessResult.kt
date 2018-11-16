@@ -78,7 +78,7 @@ data class ProcessResult(val updates: Set<Update>) {
     }
 
     companion object {
-        fun builder(block: Builder.() -> Unit): ProcessResult {
+        operator fun invoke(block: Builder.() -> Unit) : ProcessResult {
             val updates = mutableSetOf<Update>()
 
             object : Builder {

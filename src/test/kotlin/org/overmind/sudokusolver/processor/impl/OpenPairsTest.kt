@@ -29,7 +29,7 @@ class OpenPairsTest {
             val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder {
+                    .isEqualTo(ProcessResult {
                         CandidatesLose(5) at Position(4, 1)
                         CandidatesLose(5) at Position(4, 2)
 

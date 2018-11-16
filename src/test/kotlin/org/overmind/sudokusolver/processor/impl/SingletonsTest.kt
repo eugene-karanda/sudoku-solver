@@ -30,7 +30,7 @@ class SingletonsTest {
             val sudoku = Sudoku.fromFile(filepath("sudoku.txt"))
 
             assertThat(subject.process(sudoku))
-                    .isEqualTo(ProcessResult.builder {
+                    .isEqualTo(ProcessResult {
                         NumberPut(7) at Position(3, 0)
                         CandidatesLose(7) at Position(7, 0)
                         CandidatesLose(7) at Position(3, 6)

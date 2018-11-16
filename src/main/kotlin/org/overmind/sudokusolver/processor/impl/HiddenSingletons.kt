@@ -9,7 +9,7 @@ import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.SudokuProcessor
 
 class HiddenSingletons : SudokuProcessor {
-    override fun process(sudoku: Sudoku) = ProcessResult.builder {
+    override fun process(sudoku: Sudoku) = ProcessResult {
         sudoku.cells
                 .asSequence()
                 .filterIsInstance<CandidatesCell>()
