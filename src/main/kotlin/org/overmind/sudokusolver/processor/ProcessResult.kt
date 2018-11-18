@@ -73,12 +73,15 @@ data class CandidatesLose(val candidates: Set<Int>) : Action {
 data class Update(val position: Position, val action: Action)
 
 data class ProcessResult(val updates: Set<Update>) {
+    val notEmpty: Boolean
+        get() = updates.isNotEmpty()
+
     interface Builder {
         infix fun Action.at(position: Position)
     }
 
     companion object {
-        operator fun invoke(block: Builder.() -> Unit) : ProcessResult {
+        operator fun invoke(block: Builder.() -> Unit): ProcessResult {
             val updates = mutableSetOf<Update>()
 
             object : Builder {
@@ -101,7 +104,7 @@ data class ProcessResult(val updates: Set<Update>) {
                     }
                     .map(Update::action)
                     .fold(null as Action?) { left, right ->
-                        left?.merge(right)?:right
+                        left?.merge(right) ?: right
                     }?.perform(cell)
         }
     }

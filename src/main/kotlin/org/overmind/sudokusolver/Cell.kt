@@ -105,3 +105,12 @@ class CandidatesCell(
         sudoku: Sudoku,
         value: CellValue
 ) : Cell by BaseCell(position, sudoku, value)
+
+val Sudoku.solved: Boolean
+    get() {
+        return this.cells
+                .asSequence()
+                .all {
+                    it is NumberCell
+                }
+    }

@@ -5,9 +5,9 @@ import org.overmind.sudokusolver.NumberCell
 import org.overmind.sudokusolver.Sudoku
 import org.overmind.sudokusolver.processor.ProcessResult
 import org.overmind.sudokusolver.processor.SetupCandidates
-import org.overmind.sudokusolver.processor.SudokuProcessor
+import org.overmind.sudokusolver.processor.SudokuPreProcessor
 
-class CandidatesProcessor : SudokuProcessor {
+class CandidatesProcessor : SudokuPreProcessor {
     override fun process(sudoku: Sudoku) = ProcessResult {
         sudoku.cells
                 .asSequence()

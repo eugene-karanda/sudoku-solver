@@ -5,3 +5,5 @@ import org.overmind.sudokusolver.Sudoku
 interface SudokuProcessor {
     fun process(sudoku: Sudoku): ProcessResult
 }
+
+interface SudokuPreProcessor : SudokuProcessor
