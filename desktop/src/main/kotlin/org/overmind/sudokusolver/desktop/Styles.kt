@@ -1,6 +1,7 @@
 package org.overmind.sudokusolver.desktop
 
 import tornadofx.Stylesheet
+import tornadofx.c
 import tornadofx.cssclass
 import tornadofx.px
 
@@ -13,7 +14,7 @@ class Styles : Stylesheet() {
 
     init {
         sudoku {
-            //backgroundColor += c("black")
+            backgroundColor += c("black")
             //vgap = 15.px
             //hgap = 15.px
         }

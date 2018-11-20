@@ -8,15 +8,8 @@ class SudokuView : View() {
 
         (0 until 9).forEach { rowIndex ->
             (0 until 9).forEach { columnIndex ->
-                /*add(CellView::class) {
-                    gridpaneConstraints {
-                        columnRowIndex(columnIndex, rowIndex)
-                        marginTop = 10.0
-                    }
-                }*/
-
-                button("$rowIndex, $columnIndex") {
-                    gridpaneConstraints {
+                this += CellView().run {
+                    root.gridpaneConstraints {
                         columnRowIndex(columnIndex, rowIndex)
                     }
                 }
