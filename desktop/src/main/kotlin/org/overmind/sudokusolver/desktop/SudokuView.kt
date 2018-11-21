@@ -6,13 +6,23 @@ class SudokuView : View() {
     override val root = gridpane {
         addClass(Styles.sudoku)
 
-        (0 until 9).forEach { rowIndex ->
-            (0 until 9).forEach { columnIndex ->
-                this += CellView().run {
-                    root.gridpaneConstraints {
-                        columnRowIndex(columnIndex, rowIndex)
+        (0 until 3).forEach {
+            row {
+                (0 until 3).forEach {
+                    gridpane {
+                        addClass(Styles.square)
+
+                        (0 until 3).forEach {
+                            row {
+                                (0 until 3).forEach {
+                                    add<CellFragment> {
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
+
             }
         }
     }
@@ -22,7 +32,7 @@ class SudokuView : View() {
     }
 
     override fun onDock() {
-        //currentStage?.isResizable = false
+        currentStage?.isResizable = false
     }
 }
 

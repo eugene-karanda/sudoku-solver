@@ -7,26 +7,28 @@ import tornadofx.px
 
 class Styles : Stylesheet() {
     companion object {
+        val sudoku by cssclass()
+        val square by cssclass()
         val numberButton by cssclass()
         val selectionPane by cssclass()
-        val sudoku by cssclass()
     }
 
     init {
         sudoku {
             backgroundColor += c("black")
-            //vgap = 15.px
-            //hgap = 15.px
+            vgap = 15.px
+            hgap = 15.px
         }
 
         numberButton {
-            minWidth = 100.px
-            minHeight = 100.px
+            prefWidth = 100.px
+            prefHeight = 100.px
+            fontSize = 50.px
         }
 
         selectionPane {
-            minWidth = 100.px
-            minHeight = 100.px
+            prefWidth = 100.px
+            prefHeight = 100.px
 
             button {
                 prefWidth = 33.3.px

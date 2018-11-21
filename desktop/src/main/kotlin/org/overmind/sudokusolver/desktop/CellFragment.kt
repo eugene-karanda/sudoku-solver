@@ -5,19 +5,9 @@ import javafx.scene.Parent
 import javafx.scene.control.Button
 import tornadofx.*
 
-class CellView : View() {
+class CellFragment : Fragment() {
     private var numberButton: Button by singleAssign()
-    private var selectionPane = gridpane {
-        addClass(Styles.selectionPane)
-
-        (0 until 9).forEach { index -> //TODO to view
-            button("${index + 1}") {
-                gridpaneConstraints {
-                    columnRowIndex(index % 3, index / 3)
-                }
-            }
-        }
-    }
+    private var selectionPane = SelectionFragment()
 
     override val root: Parent = vbox {
         numberButton = button {
@@ -27,7 +17,12 @@ class CellView : View() {
 
     init {
         numberButton.onMouseClicked = EventHandler {
-            numberButton.replaceWith(selectionPane)
+            numberButton.replaceWith(selectionPane.root)
+        }
+
+        selectionPane.onSelect {
+            numberButton.text = "$it"
+            selectionPane.root.replaceWith(numberButton)
         }
     }
 }
